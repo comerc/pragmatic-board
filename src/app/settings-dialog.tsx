@@ -1,26 +1,26 @@
-'use client';
+'use client'
 
-import { TFields, TSelectField, TSettings } from '@/shared/settings';
-import { SettingsContext } from '@/shared/settings-context';
-import { Gift } from 'lucide-react';
-import { forwardRef, Fragment, useContext } from 'react';
+import { TFields, TSelectField, TSettings } from '@/shared/settings'
+import { SettingsContext } from '@/shared/settings-context'
+import { Gift } from 'lucide-react'
+import { forwardRef, Fragment, useContext } from 'react'
 
 type TBooleanFields = {
-  [TKey in keyof TFields]: TFields[TKey]['type'] extends 'boolean' ? TFields[TKey] : never;
-};
+  [TKey in keyof TFields]: TFields[TKey]['type'] extends 'boolean' ? TFields[TKey] : never
+}
 
 function BooleanField<TFieldKey extends keyof TBooleanFields>({
   fieldKey,
   fields,
   value,
 }: {
-  fields: TFields;
-  fieldKey: TFieldKey;
+  fields: TFields
+  fieldKey: TFieldKey
   // TODO: better?
-  value: boolean;
+  value: boolean
 }) {
-  const { update } = useContext(SettingsContext);
-  const field = fields[fieldKey];
+  const { update } = useContext(SettingsContext)
+  const field = fields[fieldKey]
   return (
     <label className="flex flex-row gap-2 rounded border p-2">
       <div className="flex flex-grow flex-col">
@@ -29,7 +29,7 @@ function BooleanField<TFieldKey extends keyof TBooleanFields>({
       </div>
       <input type="checkbox" checked={value} onChange={() => update({ [fieldKey]: !value })} />
     </label>
-  );
+  )
 }
 
 function SelectField({
@@ -37,11 +37,11 @@ function SelectField({
   fieldKey,
   value,
 }: {
-  field: TSelectField<string>;
-  fieldKey: keyof TSettings;
-  value: string;
+  field: TSelectField<string>
+  fieldKey: keyof TSettings
+  value: string
 }) {
-  const { update } = useContext(SettingsContext);
+  const { update } = useContext(SettingsContext)
   return (
     <div className="flex flex-col gap-2 rounded border p-2">
       <span className="font-bold">{field.title}</span>
@@ -58,13 +58,13 @@ function SelectField({
         ))}
       </select>
     </div>
-  );
+  )
 }
 
 type TCredit = {
-  title: string;
-  href: string;
-};
+  title: string
+  href: string
+}
 
 const credits: TCredit[] = [
   {
@@ -83,7 +83,7 @@ const credits: TCredit[] = [
     title: 'Lucide',
     href: 'https://lucide.dev/',
   },
-];
+]
 
 function Credit({ credit }: { credit: TCredit }) {
   return (
@@ -95,11 +95,11 @@ function Credit({ credit }: { credit: TCredit }) {
     >
       {credit.title}
     </a>
-  );
+  )
 }
 
 export const SettingsDialog = forwardRef<HTMLDivElement>(function SettingsDialog(props, ref) {
-  const { settings, fields, reset } = useContext(SettingsContext);
+  const { settings, fields, reset } = useContext(SettingsContext)
 
   return (
     <div
@@ -109,8 +109,8 @@ export const SettingsDialog = forwardRef<HTMLDivElement>(function SettingsDialog
       <div className="flex select-none flex-col gap-2 p-2">
         {/* Sorry TS :( */}
         {Object.entries(fields).map((value) => {
-          const fieldKey = value[0] as keyof typeof fields;
-          const field = value[1];
+          const fieldKey = value[0] as keyof typeof fields
+          const field = value[1]
           if (field.type === 'boolean') {
             return (
               <BooleanField
@@ -119,7 +119,7 @@ export const SettingsDialog = forwardRef<HTMLDivElement>(function SettingsDialog
                 fieldKey={fieldKey}
                 value={settings[fieldKey] as boolean}
               />
-            );
+            )
           }
           if (field.type === 'select') {
             return (
@@ -129,9 +129,9 @@ export const SettingsDialog = forwardRef<HTMLDivElement>(function SettingsDialog
                 fieldKey={fieldKey as keyof TSettings}
                 value={settings[fieldKey] as string}
               />
-            );
+            )
           }
-          return null;
+          return null
         })}
         <button
           type="button"
@@ -157,5 +157,5 @@ export const SettingsDialog = forwardRef<HTMLDivElement>(function SettingsDialog
         </div>
       </div>
     </div>
-  );
-});
+  )
+})

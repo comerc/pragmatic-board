@@ -1,20 +1,20 @@
-'use client';
+'use client'
 
 import {
   draggable,
   dropTargetForElements,
-} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
-import { Copy, Ellipsis, Plus } from 'lucide-react';
-import { memo, useContext, useEffect, useRef, useState } from 'react';
-import invariant from 'tiny-invariant';
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
+import { Copy, Ellipsis, Plus } from 'lucide-react'
+import { memo, useContext, useEffect, useRef, useState } from 'react'
+import invariant from 'tiny-invariant'
 
-import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element';
-import { unsafeOverflowAutoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/unsafe-overflow/element';
-import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
-import { DragLocationHistory } from '@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types';
-import { preserveOffsetOnSource } from '@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source';
-import { setCustomNativeDragPreview } from '@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview';
-import { Card, CardShadow } from './card';
+import { autoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/element'
+import { unsafeOverflowAutoScrollForElements } from '@atlaskit/pragmatic-drag-and-drop-auto-scroll/unsafe-overflow/element'
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine'
+import { DragLocationHistory } from '@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types'
+import { preserveOffsetOnSource } from '@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source'
+import { setCustomNativeDragPreview } from '@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview'
+import { Card, CardShadow } from './card'
 import {
   getColumnData,
   isCardData,
@@ -24,37 +24,37 @@ import {
   isDraggingAColumn,
   TCardData,
   TColumn,
-} from './data';
-import { blockBoardPanningAttr } from './data-attributes';
-import { isSafari } from './is-safari';
-import { isShallowEqual } from './is-shallow-equal';
-import { SettingsContext } from './settings-context';
+} from './data'
+import { blockBoardPanningAttr } from './data-attributes'
+import { isSafari } from './is-safari'
+import { isShallowEqual } from './is-shallow-equal'
+import { SettingsContext } from './settings-context'
 
 type TColumnState =
   | {
-    type: 'is-card-over';
-    isOverChildCard: boolean;
-    dragging: DOMRect;
+    type: 'is-card-over'
+    isOverChildCard: boolean
+    dragging: DOMRect
   }
   | {
-    type: 'is-column-over';
-    draggingHeight: number;
+    type: 'is-column-over'
+    draggingHeight: number
   }
   | {
-    type: 'idle';
+    type: 'idle'
   }
   | {
-    type: 'is-dragging';
-  };
+    type: 'is-dragging'
+  }
 
 const stateStyles: { [Key in TColumnState['type']]: string } = {
   idle: 'cursor-grab',
   'is-card-over': 'outline outline-2 outline-neutral-50',
   'is-dragging': 'opacity-40',
   'is-column-over': 'bg-slate-900',
-};
+}
 
-const idle = { type: 'idle' } satisfies TColumnState;
+const idle = { type: 'idle' } satisfies TColumnState
 
 /**
  * A memoized component for rendering out the card.
@@ -62,45 +62,45 @@ const idle = { type: 'idle' } satisfies TColumnState;
  * Created so that state changes to the column don't require all cards to be rendered
  */
 const CardList = memo(function CardList({ column }: { column: TColumn }) {
-  return column.cards.map((card) => <Card key={card.id} card={card} columnId={column.id} />);
-});
+  return column.cards.map((card) => <Card key={card.id} card={card} columnId={column.id} />)
+})
 
 export function Column({ column }: { column: TColumn }) {
-  const scrollableRef = useRef<HTMLDivElement | null>(null);
-  const outerFullHeightRef = useRef<HTMLDivElement | null>(null);
-  const headerRef = useRef<HTMLDivElement | null>(null);
-  const innerRef = useRef<HTMLDivElement | null>(null);
-  const { settings } = useContext(SettingsContext);
-  const [state, setState] = useState<TColumnState>(idle);
+  const scrollableRef = useRef<HTMLDivElement | null>(null)
+  const outerFullHeightRef = useRef<HTMLDivElement | null>(null)
+  const headerRef = useRef<HTMLDivElement | null>(null)
+  const innerRef = useRef<HTMLDivElement | null>(null)
+  const { settings } = useContext(SettingsContext)
+  const [state, setState] = useState<TColumnState>(idle)
 
   useEffect(() => {
-    const outer = outerFullHeightRef.current;
-    const scrollable = scrollableRef.current;
-    const header = headerRef.current;
-    const inner = innerRef.current;
-    invariant(outer);
-    invariant(scrollable);
-    invariant(header);
-    invariant(inner);
+    const outer = outerFullHeightRef.current
+    const scrollable = scrollableRef.current
+    const header = headerRef.current
+    const inner = innerRef.current
+    invariant(outer)
+    invariant(scrollable)
+    invariant(header)
+    invariant(inner)
 
-    const data = getColumnData({ column, rect: inner.getBoundingClientRect() });
+    const data = getColumnData({ column, rect: inner.getBoundingClientRect() })
 
     function setIsCardOver({ data, location }: { data: TCardData; location: DragLocationHistory }) {
-      const innerMost = location.current.dropTargets[0];
-      const isOverChildCard = Boolean(innerMost && isCardDropTargetData(innerMost.data));
+      const innerMost = location.current.dropTargets[0]
+      const isOverChildCard = Boolean(innerMost && isCardDropTargetData(innerMost.data))
 
       const proposed: TColumnState = {
         type: 'is-card-over',
         dragging: data.rect,
         isOverChildCard,
-      };
+      }
       // optimization - don't update state if we don't need to.
       setState((current) => {
         if (isShallowEqual(proposed, current)) {
-          return current;
+          return current
         }
-        return proposed;
-      });
+        return proposed
+      })
     }
 
     return combine(
@@ -108,82 +108,82 @@ export function Column({ column }: { column: TColumn }) {
         element: header,
         getInitialData: () => data,
         onGenerateDragPreview({ source, location, nativeSetDragImage }) {
-          const data = source.data;
-          invariant(isColumnData(data));
+          const data = source.data
+          invariant(isColumnData(data))
           setCustomNativeDragPreview({
             nativeSetDragImage,
             getOffset: preserveOffsetOnSource({ element: header, input: location.current.input }),
             render({ container }) {
               // Simple drag preview generation: just cloning the current element.
               // Not using react for this.
-              const rect = inner.getBoundingClientRect();
-              const preview = inner.cloneNode(true);
-              invariant(preview instanceof HTMLElement);
-              preview.style.width = `${rect.width}px`;
-              preview.style.height = `${rect.height}px`;
+              const rect = inner.getBoundingClientRect()
+              const preview = inner.cloneNode(true)
+              invariant(preview instanceof HTMLElement)
+              preview.style.width = `${rect.width}px`
+              preview.style.height = `${rect.height}px`
 
               // rotation of native drag previews does not work in safari
               if (!isSafari()) {
-                preview.style.transform = 'rotate(4deg)';
+                preview.style.transform = 'rotate(4deg)'
               }
 
-              container.appendChild(preview);
+              container.appendChild(preview)
             },
-          });
+          })
         },
         onDragStart() {
-          setState({ type: 'is-dragging' });
+          setState({ type: 'is-dragging' })
         },
         onDrop() {
-          setState(idle);
+          setState(idle)
         },
       }),
       dropTargetForElements({
         element: outer,
         getData: () => data,
         canDrop({ source }) {
-          return isDraggingACard({ source }) || isDraggingAColumn({ source });
+          return isDraggingACard({ source }) || isDraggingAColumn({ source })
         },
         getIsSticky: () => true,
         onDragStart({ source, location }) {
           if (isCardData(source.data)) {
-            setIsCardOver({ data: source.data, location });
+            setIsCardOver({ data: source.data, location })
           }
         },
         onDragEnter({ source, location }) {
           if (isCardData(source.data)) {
-            setIsCardOver({ data: source.data, location });
-            return;
+            setIsCardOver({ data: source.data, location })
+            return
           }
           if (isColumnData(source.data) && source.data.column.id !== column.id) {
-            const draggingHeight = source.data.rect.height;
-            console.log('Setting is-column-over with height:', draggingHeight);
-            setState({ type: 'is-column-over', draggingHeight });
+            const draggingHeight = source.data.rect.height
+            console.log('Setting is-column-over with height:', draggingHeight)
+            setState({ type: 'is-column-over', draggingHeight })
           }
         },
         onDropTargetChange({ source, location }) {
           if (isCardData(source.data)) {
-            setIsCardOver({ data: source.data, location });
-            return;
+            setIsCardOver({ data: source.data, location })
+            return
           }
         },
         onDragLeave({ source }) {
           if (isColumnData(source.data) && source.data.column.id === column.id) {
-            return;
+            return
           }
-          setState(idle);
+          setState(idle)
         },
         onDrop() {
-          setState(idle);
+          setState(idle)
         },
       }),
       autoScrollForElements({
         canScroll({ source }) {
           if (!settings.isOverElementAutoScrollEnabled) {
-            return false;
+            return false
           }
 
-          return isDraggingACard({ source });
+          return isDraggingACard({ source })
         },
         getConfiguration: () => ({ maxScrollSpeed: settings.columnScrollSpeed }),
         element: scrollable,
@@ -193,14 +193,14 @@ export function Column({ column }: { column: TColumn }) {
         getConfiguration: () => ({ maxScrollSpeed: settings.columnScrollSpeed }),
         canScroll({ source }) {
           if (!settings.isOverElementAutoScrollEnabled) {
-            return false;
+            return false
           }
 
           if (!settings.isOverflowScrollingEnabled) {
-            return false;
+            return false
           }
 
-          return isDraggingACard({ source });
+          return isDraggingACard({ source })
         },
         getOverflow() {
           return {
@@ -210,11 +210,11 @@ export function Column({ column }: { column: TColumn }) {
             forBottomEdge: {
               bottom: 1000,
             },
-          };
+          }
         },
       }),
-    );
-  }, [column, settings]);
+    )
+  }, [column, settings])
 
   return (
     <div className="flex w-72 flex-shrink-0 select-none flex-col" ref={outerFullHeightRef}>
@@ -268,5 +268,5 @@ export function Column({ column }: { column: TColumn }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

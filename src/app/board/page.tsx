@@ -1,22 +1,22 @@
-import { TBoard, TCard, TColumn } from '@/shared/data';
-import { Board } from '@/shared/board';
-import generateSentence from '@/shared/util';
+import { TBoard, TCard, TColumn } from '@/shared/data'
+import { Board } from '@/shared/board'
+import generateSentence from '@/shared/util'
 
 function getInitialData(): TBoard {
   // Doing this so we get consistent ids on server and client
   const getCards = (() => {
-    let count: number = 0;
+    let count: number = 0
 
     return function getCards({ amount }: { amount: number }): TCard[] {
       return Array.from({ length: amount }, (): TCard => {
-        const id = count++;
+        const id = count++
         return {
           id: `card:${id}`,
           description: generateSentence(),
-        };
-      });
-    };
-  })();
+        }
+      })
+    }
+  })()
 
   const columns: TColumn[] = [
     { id: 'column:a', title: 'Column A', cards: getCards({ amount: 60 }) },
@@ -28,13 +28,13 @@ function getInitialData(): TBoard {
     { id: 'column:g', title: 'Column G', cards: getCards({ amount: 4 }) },
     { id: 'column:h', title: 'Column H', cards: getCards({ amount: 8 }) },
     { id: 'column:i', title: 'Column I', cards: getCards({ amount: 30 }) },
-  ];
+  ]
 
   return {
     columns,
-  };
+  }
 }
 
 export default function Page() {
-  return <Board initial={getInitialData()} />;
+  return <Board initial={getInitialData()} />
 }

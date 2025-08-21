@@ -1,18 +1,18 @@
-'use client';
+'use client'
 
 export type TSelectField<T = string> = {
-  type: 'select';
-  title: string;
-  description: string;
-  options: T[];
-};
+  type: 'select'
+  title: string
+  description: string
+  options: T[]
+}
 
 export type TBooleanField = {
-  type: 'boolean';
-  title: string;
-  description: string;
+  type: 'boolean'
+  title: string
+  description: string
   // children?: Record<string, TBooleanField | TSelectField>
-};
+}
 
 export const fields = {
   isBoardMoreObvious: {
@@ -53,10 +53,10 @@ export const fields = {
     description: 'What should the max vertical scroll speed for columns be?',
     options: ['fast', 'standard'],
   },
-} as const satisfies Record<string, TBooleanField | TSelectField>;
+} as const satisfies Record<string, TBooleanField | TSelectField>
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TupleToUnion<T extends any[]> = T[number];
+export type TupleToUnion<T extends any[]> = T[number]
 
 type GetFieldValues<TRecord extends Record<string, TBooleanField | TSelectField>> = {
   // [TKey in keyof TRecord]: TRecord[TKey] extends TBooleanField ? boolean : TRecord[TKey] extends TSelectField ? 'fast' | 'standard' : never
@@ -64,9 +64,9 @@ type GetFieldValues<TRecord extends Record<string, TBooleanField | TSelectField>
   ? boolean
   : TRecord[TKey] extends TSelectField
   ? TupleToUnion<TRecord[TKey]['options']>
-  : never;
-};
-export type TFields = typeof fields;
+  : never
+}
+export type TFields = typeof fields
 
-export type TSettings = GetFieldValues<TFields>;
+export type TSettings = GetFieldValues<TFields>
 

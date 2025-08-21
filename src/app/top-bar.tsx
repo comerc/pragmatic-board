@@ -1,25 +1,25 @@
-import React, { useState, useRef, useContext, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { bindAll } from 'bind-event-listener';
-import { Code, PanelTopClose, PanelTopOpen, Settings, Zap } from 'lucide-react';
-import { SettingsContext } from '@/shared/settings-context';
-import { FPSPanel } from './fps-panel';
-import { SettingsDialog } from './settings-dialog';
+import React, { useState, useRef, useContext, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { bindAll } from 'bind-event-listener'
+import { Code, PanelTopClose, PanelTopOpen, Settings, Zap } from 'lucide-react'
+import { SettingsContext } from '@/shared/settings-context'
+import { FPSPanel } from './fps-panel'
+import { SettingsDialog } from './settings-dialog'
 
-type TRoute = { title: string; href: string };
+type TRoute = { title: string; href: string }
 
 const routes = {
   board: { title: 'Board', href: '/board' },
   oneColumn: { title: 'One Column', href: '/one-column' },
   twoColumns: { title: 'Two Columns', href: '/two-columns' },
-} as const satisfies { [key: string]: TRoute };
+} as const satisfies { [key: string]: TRoute }
 
 const TopBar: React.FC = () => {
-  const [isTopBarExpanded, setIsTopBarExpanded] = useState<boolean>(true);
-  const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState<boolean>(false);
-  const settingsDialogRef = useRef<HTMLDivElement | null>(null);
-  const settingsTriggerRef = useRef<HTMLButtonElement | null>(null);
-  const { settings } = useContext(SettingsContext);
+  const [isTopBarExpanded, setIsTopBarExpanded] = useState<boolean>(true)
+  const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState<boolean>(false)
+  const settingsDialogRef = useRef<HTMLDivElement | null>(null)
+  const settingsTriggerRef = useRef<HTMLButtonElement | null>(null)
+  const { settings } = useContext(SettingsContext)
 
   useEffect(() => {
     return bindAll(window, [
@@ -27,45 +27,45 @@ const TopBar: React.FC = () => {
         type: 'keydown',
         listener(event) {
           if (event.key !== 'Escape') {
-            return;
+            return
           }
 
           if (isSettingsDialogOpen) {
-            setIsSettingsDialogOpen(false);
-            return;
+            setIsSettingsDialogOpen(false)
+            return
           }
-          setIsTopBarExpanded((current) => !current);
+          setIsTopBarExpanded((current) => !current)
         },
       },
       {
         type: 'click',
         listener(event) {
           if (!(event.target instanceof Element)) {
-            return;
+            return
           }
 
           if (!isSettingsDialogOpen) {
-            return;
+            return
           }
 
-          const dialog = settingsDialogRef.current;
-          const trigger = settingsTriggerRef.current;
+          const dialog = settingsDialogRef.current
+          const trigger = settingsTriggerRef.current
           if (!dialog || !trigger) {
-            return;
+            return
           }
           if (trigger.contains(event.target)) {
-            return;
+            return
           }
 
           if (dialog.contains(event.target)) {
-            return;
+            return
           }
 
-          setIsSettingsDialogOpen(false);
+          setIsSettingsDialogOpen(false)
         },
       },
-    ]);
-  }, [isTopBarExpanded, isSettingsDialogOpen]);
+    ])
+  }, [isTopBarExpanded, isSettingsDialogOpen])
 
   return (
     <>
@@ -126,7 +126,7 @@ const TopBar: React.FC = () => {
         {isSettingsDialogOpen ? <SettingsDialog ref={settingsDialogRef} /> : null}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default TopBar;
+export default TopBar
