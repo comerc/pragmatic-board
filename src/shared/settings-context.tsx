@@ -23,8 +23,8 @@ const defaultSettings: TSettings = {
 export const SettingsContext = createContext<TSettingsContext>({
   fields,
   settings: defaultSettings,
-  update: () => {},
-  reset: () => {},
+  update: () => { },
+  reset: () => { },
 });
 
 export function SettingsContextProvider({ children }: { children: ReactNode }) {

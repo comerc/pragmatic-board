@@ -3,7 +3,6 @@
 import { TFields, TSelectField, TSettings } from '@/shared/settings';
 import { SettingsContext } from '@/shared/settings-context';
 import { Gift } from 'lucide-react';
-import Link from 'next/link';
 import { forwardRef, Fragment, useContext } from 'react';
 
 type TBooleanFields = {
@@ -88,14 +87,14 @@ const credits: TCredit[] = [
 
 function Credit({ credit }: { credit: TCredit }) {
   return (
-    <Link
-      key={credit.href}
+    <a
       className="text-sky-800 hover:text-sky-700 active:text-sky-900"
       target="_blank"
       href={credit.href}
+      rel="noopener noreferrer"
     >
       {credit.title}
-    </Link>
+    </a>
   );
 }
 

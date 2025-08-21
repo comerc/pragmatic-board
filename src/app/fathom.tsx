@@ -1,49 +1,24 @@
-'use client';
-
 import { load, trackPageview } from 'fathom-client';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
-export function TrackPageview() {
-  const pathname = usePathname();
-  const search = useSearchParams();
+export function FathomTracker() {
+  const location = useLocation();
 
-  // Load the Fathom script on mount
   useEffect(() => {
-    const fathomId = process.env.NEXT_PUBLIC_FATHOM_ID;
+    const fathomId = import.meta.env.VITE_FATHOM_ID;
 
-    if (!fathomId) {
-      return;
+    if (fathomId) {
+      load(fathomId, {
+        includedDomains: ['pragmatic-board.vercel.app'],
+        spa: 'auto',
+      });
     }
-
-    load(fathomId, {
-      auto: false,
-    });
   }, []);
 
-  // Record a Page View when route changes
   useEffect(() => {
-    if (!pathname) {
-      return;
-    }
-
-    const url: string = search ? `${pathname}?${search.toString()}` : pathname;
-
-    trackPageview({
-      url,
-      referrer: document.referrer,
-    });
-  }, [search, pathname]);
+    trackPageview();
+  }, [location.pathname]);
 
   return null;
-}
-
-export function FathomAnalytics() {
-  return (
-    // A Suspense boundary is needed for `useSearchParams()`
-    // https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
-    <Suspense>
-      <TrackPageview />
-    </Suspense>
-  );
 }

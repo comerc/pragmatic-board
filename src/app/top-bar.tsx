@@ -1,11 +1,8 @@
-'use client';
-
-import { SettingsContext } from '@/shared/settings-context';
+import React, { useState, useRef, useContext, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { bindAll } from 'bind-event-listener';
 import { Code, PanelTopClose, PanelTopOpen, Settings, Zap } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { SettingsContext } from '@/shared/settings-context';
 import { FPSPanel } from './fps-panel';
 import { SettingsDialog } from './settings-dialog';
 
@@ -17,8 +14,7 @@ const routes = {
   twoColumns: { title: 'Two Columns', href: '/two-columns' },
 } as const satisfies { [key: string]: TRoute };
 
-export function TopBar() {
-  const pathname = usePathname();
+const TopBar: React.FC = () => {
   const [isTopBarExpanded, setIsTopBarExpanded] = useState<boolean>(true);
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState<boolean>(false);
   const settingsDialogRef = useRef<HTMLDivElement | null>(null);
@@ -77,9 +73,9 @@ export function TopBar() {
         <header className="flex h-12 flex-row items-center gap-1 border-b bg-sky-800 px-3">
           {Object.values(routes).map((route) => (
             <Link
-              href={route.href}
+              to={route.href}
               key={route.href}
-              className={`flex-shrink rounded p-2 text-sm font-bold leading-none text-white hover:bg-sky-700 active:bg-sky-600 sm:text-base sm:leading-none ${pathname === route.href ? 'bg-blue-900' : ''}`}
+              className={`flex-shrink rounded p-2 text-sm font-bold leading-none text-white hover:bg-sky-700 active:bg-sky-600 sm:text-base sm:leading-none ${location.pathname === route.href ? 'bg-blue-900' : ''}`}
             >
               {route.title}
             </Link>
@@ -90,22 +86,24 @@ export function TopBar() {
         {settings.isFPSPanelEnabled ? <FPSPanel /> : null}
         {isTopBarExpanded ? (
           <>
-            <Link
+            <a
               href="https://github.com/alexreardon/pragmatic-board"
               className="flex h-8 flex-row items-center gap-1 rounded bg-slate-800 px-2 text-white hover:bg-gray-700 active:bg-gray-600"
               target="_blank"
+              rel="noopener noreferrer"
             >
               <Code size={16} />
               <span className="hidden sm:block">Code</span>
-            </Link>
-            <Link
+            </a>
+            <a
               href="https://stackblitz.com/~/github.com/alexreardon/pragmatic-board"
               className="flex h-8 flex-row items-center gap-1 rounded bg-slate-800 px-2 text-white hover:bg-gray-700 active:bg-gray-600"
               target="_blank"
+              rel="noopener noreferrer"
             >
               <Zap size={16} />
               <span className="hidden sm:block">Run</span>
-            </Link>
+            </a>
           </>
         ) : null}
         <button
@@ -129,4 +127,6 @@ export function TopBar() {
       </div>
     </>
   );
-}
+};
+
+export default TopBar;

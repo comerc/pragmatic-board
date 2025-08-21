@@ -61,12 +61,12 @@ export type TupleToUnion<T extends any[]> = T[number];
 type GetFieldValues<TRecord extends Record<string, TBooleanField | TSelectField>> = {
   // [TKey in keyof TRecord]: TRecord[TKey] extends TBooleanField ? boolean : TRecord[TKey] extends TSelectField ? 'fast' | 'standard' : never
   [TKey in keyof TRecord]: TRecord[TKey] extends TBooleanField
-    ? boolean
-    : TRecord[TKey] extends TSelectField
-      ? TupleToUnion<TRecord[TKey]['options']>
-      : never;
+  ? boolean
+  : TRecord[TKey] extends TSelectField
+  ? TupleToUnion<TRecord[TKey]['options']>
+  : never;
 };
-
 export type TFields = typeof fields;
 
 export type TSettings = GetFieldValues<TFields>;
+
