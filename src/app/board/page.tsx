@@ -1,5 +1,6 @@
 import { TBoard, TCard, TColumn } from '@/shared/data';
 import { Board } from '@/shared/board';
+import generateSentence from '@/shared/util';
 
 function getInitialData(): TBoard {
   // Doing this so we get consistent ids on server and client
@@ -11,7 +12,7 @@ function getInitialData(): TBoard {
         const id = count++;
         return {
           id: `card:${id}`,
-          description: `Card ${id}`,
+          description: generateSentence(),
         };
       });
     };

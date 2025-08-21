@@ -15,6 +15,7 @@
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.0.3",
     "bind-event-listener": "^3.0.0",
     "fathom-client": "^3.7.2",
+    "lorem-ipsum": "^2.0.8",
     "lucide-react": "^0.454.0",
     "next": "15.0.1",
     "prettier": "^3.3.3",
