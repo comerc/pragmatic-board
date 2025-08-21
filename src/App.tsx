@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import BoardPage from './app/board/page';
 import OneColumnPage from './app/one-column/page';
 import TwoColumnsPage from './app/two-columns/page';
-import { SettingsDialog } from './app/settings-dialog';
 import TopBar from './app/top-bar';
 import { FathomTracker } from './app/fathom';
 import { SettingsContextProvider } from './shared/settings-context';
