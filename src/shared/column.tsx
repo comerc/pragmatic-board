@@ -32,19 +32,20 @@ import { SettingsContext } from './settings-context';
 
 type TColumnState =
   | {
-      type: 'is-card-over';
-      isOverChildCard: boolean;
-      dragging: DOMRect;
-    }
+    type: 'is-card-over';
+    isOverChildCard: boolean;
+    dragging: DOMRect;
+  }
   | {
-      type: 'is-column-over';
-    }
+    type: 'is-column-over';
+    draggingHeight: number;
+  }
   | {
-      type: 'idle';
-    }
+    type: 'idle';
+  }
   | {
-      type: 'is-dragging';
-    };
+    type: 'is-dragging';
+  };
 
 const stateStyles: { [Key in TColumnState['type']]: string } = {
   idle: 'cursor-grab',
@@ -82,7 +83,7 @@ export function Column({ column }: { column: TColumn }) {
     invariant(header);
     invariant(inner);
 
-    const data = getColumnData({ column });
+    const data = getColumnData({ column, rect: inner.getBoundingClientRect() });
 
     function setIsCardOver({ data, location }: { data: TCardData; location: DragLocationHistory }) {
       const innerMost = location.current.dropTargets[0];
@@ -155,7 +156,9 @@ export function Column({ column }: { column: TColumn }) {
             return;
           }
           if (isColumnData(source.data) && source.data.column.id !== column.id) {
-            setState({ type: 'is-column-over' });
+            const draggingHeight = source.data.rect.height;
+            console.log('Setting is-column-over with height:', draggingHeight);
+            setState({ type: 'is-column-over', draggingHeight });
           }
         },
         onDropTargetChange({ source, location }) {
@@ -217,6 +220,7 @@ export function Column({ column }: { column: TColumn }) {
     <div className="flex w-72 flex-shrink-0 select-none flex-col" ref={outerFullHeightRef}>
       <div
         className={`flex max-h-full flex-col rounded-lg bg-slate-800 text-neutral-50 ${stateStyles[state.type]}`}
+        style={state.type === 'is-column-over' ? { height: `${state.draggingHeight}px` } : {}}
         ref={innerRef}
         {...{ [blockBoardPanningAttr]: true }}
       >
